@@ -10,17 +10,10 @@ pool:
   name: Default
 
 steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    mavenOptions: '-Xmx3072m'
-    javaHomeOption: 'JDKVersion'
-    jdkVersionOption: '17'
-    jdkArchitectureOption: 'x64'
-    publishJUnitResults: true
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    goals: 'clean package'  # Compila el proyecto y empaqueta el JAR
-  displayName: 'Compilar y ejecutar tests con Maven'
+- script: |
+    echo "Compilando y ejecutando tests con Maven..."
+    mvn clean package
+  displayName: 'Build con Maven manual'
 
 # Paso 2 Ejecutar la aplicación por consola (si ya tiene lógica ejecutable en el main)
 - script: |
