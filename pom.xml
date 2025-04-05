@@ -31,7 +31,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.soft.saludvital.vitalapp.application.MainApp</mainClass>
+                            <mainClass>com.soft.saludvital.vitalapp.application.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
