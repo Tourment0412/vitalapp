@@ -4,6 +4,6 @@ package com.soft.saludvital.vitalapp.application;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Prueba de ejecucion en otro ambiente");
+        System.out.println("Prueba de ejecucion en otro ambiente sin agent");
     }
 }
