@@ -17,6 +17,7 @@ steps:
   # Paso 2: Publicar resultados de pruebas JUnit
 - task: PublishTestResults@2
   inputs:
+    testResultsFormat: 'JUnit'
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
     testRunTitle: 'JUnit Test Results'
     failTaskOnFailedTests: true
