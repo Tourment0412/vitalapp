@@ -14,7 +14,14 @@ steps:
     echo "Compilando y ejecutando tests con Maven..."
     mvn clean package
   displayName: 'Build con Maven manual'
-
+  # Paso 2: Publicar resultados de pruebas JUnit
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    testRunTitle: 'JUnit Test Results'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+  displayName: 'Publicar resultados de pruebas JUnit'
 # Paso 2 Ejecutar la aplicación por consola (si ya tiene lógica ejecutable en el main)
 - script: |
     java -jar target/VitalApp-1.0-SNAPSHOT.jar
