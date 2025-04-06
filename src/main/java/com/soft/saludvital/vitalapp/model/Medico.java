@@ -40,11 +40,21 @@ public class Medico {
      * @return
      */
     public Cita agendarCita(LocalDateTime fecha,Paciente paciente, String motivo, String estado, String observaciones) {
-        return new Cita(fecha,
-                paciente,
-                this,
-                motivo,
-                estado,
-                observaciones);
+        Cita cita = Cita.builder()
+                .fechaHora(fecha)
+                .paciente(paciente)
+                .medico(this)
+                .motivo(motivo)
+                .estado(estado)
+                .observaciones(observaciones)
+                .build();
+
+        if (paciente.getHistorialMedico() != null) {
+            paciente.getHistorialMedico().getListaCitas().add(cita);
+        } else {
+            System.out.println("El paciente no tiene historial médico registrado.");
+        }
+
+        return cita;
     }
 }
