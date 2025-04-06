@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DemoTest {
 
@@ -77,6 +76,66 @@ public class DemoTest {
                 () -> assertEquals("Chequeo cardiologico de rutina", cita.getMotivo()),
                 () -> assertEquals("Programada", cita.getEstado()),
                 () -> assertEquals("Paciente indica fatiga al caminar", cita.getObservaciones())
+        );
+    }
+
+    /**
+     * Metodo que verifica el funcionamiento de la definicion de diagnostico
+     */
+    @Test
+    void difinirDiagnosticoTest() {
+        Medico medico = quemarMedico();
+        Paciente paciente = quemarPaciente();
+        LocalDateTime fechaHora=LocalDateTime.of(2025, 4, 10, 15, 30);
+        Cita cita=medico.agendarCita(
+                fechaHora,
+                paciente,
+                "Chequeo cardiologico de rutina",
+                "Programada",
+                "Paciente indica fatiga al caminar");
+        cita.definirDiagnostico("Urgente","El paciente sufre problemas severos del del corazon, es necesario agendar una cita urgente con especialista");
+        assertAll("Verificar datos de la cita",
+                () -> assertEquals(medico, cita.getMedico()),
+                () -> assertEquals(paciente, cita.getPaciente()),
+                () -> assertEquals(fechaHora, cita.getFechaHora()),
+                () -> assertEquals("Chequeo cardiologico de rutina", cita.getMotivo()),
+                () -> assertEquals("Programada", cita.getEstado()),
+                () -> assertEquals("Paciente indica fatiga al caminar", cita.getObservaciones()),
+                () -> assertEquals("Urgente", cita.getGravedadDiagnostigo()),
+                () -> assertEquals("El paciente sufre problemas severos del del corazon, es necesario agendar una cita urgente con especialista", cita.getDiagnostico())
+        );
+    }
+
+    /**
+     * Metodo que verifica el funcionamiento del envio de alertas de salud al paciente
+     */
+    @Test
+    void enviarDiagnosticoTest() {
+        Medico medico = quemarMedico();
+        Paciente paciente = quemarPaciente();
+        LocalDateTime fechaHora = LocalDateTime.of(2025, 4, 10, 15, 30);
+        Cita cita = medico.agendarCita(
+                fechaHora,
+                paciente,
+                "Chequeo cardiologico de rutina",
+                "Programada",
+                "Paciente indica fatiga al caminar"
+        );
+
+        cita.definirDiagnostico("Urgente", "El paciente sufre problemas severos del del corazon, es necesario agendar una cita urgente con especialista");
+
+        String alerta = paciente.generarAlerta();
+
+        assertAll("Verificar datos de la cita y alerta",
+                () -> assertEquals(medico, cita.getMedico()),
+                () -> assertEquals(paciente, cita.getPaciente()),
+                () -> assertEquals(fechaHora, cita.getFechaHora()),
+                () -> assertEquals("Chequeo cardiologico de rutina", cita.getMotivo()),
+                () -> assertEquals("Programada", cita.getEstado()),
+                () -> assertEquals("Paciente indica fatiga al caminar", cita.getObservaciones()),
+                () -> assertEquals("Urgente", cita.getGravedadDiagnostigo()),
+                () -> assertEquals("El paciente sufre problemas severos del del corazon, es necesario agendar una cita urgente con especialista", cita.getDiagnostico()),
+                () -> assertTrue(alerta.contains("URGENTE"))
         );
     }
 }
