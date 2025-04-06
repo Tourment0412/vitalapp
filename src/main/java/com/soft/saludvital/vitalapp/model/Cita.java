@@ -30,4 +30,5 @@ public class Cita {
         this.estado = estado;
         this.observaciones = observaciones;
     }
+
 }
