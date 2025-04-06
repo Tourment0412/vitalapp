@@ -19,6 +19,8 @@ public class Cita {
     private String motivo;
     private String estado; // Ej: "Programada", "Cancelada", "Completada"
     private String observaciones;
+    private String gravedadDiagnostigo; // "Grave", "Leve", "Urgente"
+    private String diagnostico;
 
     @Builder
     public Cita (LocalDateTime fechaHora, Paciente paciente, Medico medico, String motivo, String estado, String observaciones){
@@ -29,6 +31,11 @@ public class Cita {
         this.motivo = motivo;
         this.estado = estado;
         this.observaciones = observaciones;
+    }
+
+    public void definirDiagnostico (String gravedadDiagnostigo, String diagnostico){
+        this.gravedadDiagnostigo = gravedadDiagnostigo;
+        this.diagnostico = diagnostico;
     }
 
 }
