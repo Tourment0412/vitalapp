@@ -10,14 +10,14 @@ steps:
   - script: java -version
     displayName: 'Versión de Java por defecto (diagnóstico)'
 
-  # Usar explícitamente Java 17 para evitar errores de incompatibilidad
-  - task: UseJavaVersion@1
+  # Configurar Java 17 explícitamente (recomendado para evitar errores de versión)
+  - task: UseJava@1
     inputs:
-      versionSpec: '17'
+      version: '17'
       architecture: 'x64'
-    displayName: 'Usar Java 17'
+    displayName: 'Configurar Java 17'
 
-  # Compilar el proyecto y ejecutar pruebas unitarias
+      # Compilar el proyecto y ejecutar pruebas unitarias
   - task: Maven@4  # usamos la versión más nueva porque Maven@3 está obsoleto
     inputs:
       mavenPomFile: 'pom.xml'
