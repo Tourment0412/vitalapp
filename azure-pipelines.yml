@@ -5,13 +5,13 @@ pool:
   vmImage: 'ubuntu-latest'  # usa el agente hospedado más reciente
 
 steps:
-
-    # Compilar el proyecto y ejecutar pruebas unitarias
-  - task: Maven@4  # usamos la versión más nueva porque Maven@3 está obsoleto
+  # Compilar el proyecto y ejecutar pruebas unitarias
+  - task: Maven@4
     inputs:
       mavenPomFile: 'pom.xml'
       goals: 'clean package'
-      javaHomeOption: 'Path'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '17'  # Especifica la versión de JDK 17
       mavenOptions: '-Xmx3072m'
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
