@@ -6,19 +6,6 @@ pool:
 
 steps:
 
-  # Verificar qué versión de Java hay por defecto (opcional, para diagnosticar)
-  - script: java -version
-    displayName: 'Versión de Java por defecto (diagnóstico)'
-
-  # Configurar Java 17 explícitamente (recomendado para evitar errores de versión)
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '17'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'PreInstalled'
-    displayName: 'Configurar Java 17'
-
-
     # Compilar el proyecto y ejecutar pruebas unitarias
   - task: Maven@4  # usamos la versión más nueva porque Maven@3 está obsoleto
     inputs:
