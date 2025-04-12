@@ -4,6 +4,7 @@ package com.soft.saludvital.vitalapp.model;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -22,7 +23,7 @@ public class Medico {
 
     @Builder
     public Medico( String nombre, String apellido, String especialidad, String telefono, String email) {
-        //TODO hacer this.id=codigoautomatico
+        this.id = UUID.randomUUID().toString();
         this.nombre = nombre;
         this.apellido = apellido;
         this.especialidad = especialidad;

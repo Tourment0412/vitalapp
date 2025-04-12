@@ -24,7 +24,7 @@ public class Cita {
 
     @Builder
     public Cita (LocalDateTime fechaHora, Paciente paciente, Medico medico, String motivo, String estado, String observaciones){
-        //TODO hacer el this.id=codigoautoamtico
+        this.id = "C"+paciente.getNombre()+medico.getNombre();
         this.fechaHora = fechaHora;
         this.paciente = paciente;
         this.medico = medico;
