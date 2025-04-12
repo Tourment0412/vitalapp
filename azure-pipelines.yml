@@ -2,27 +2,37 @@ trigger:
   - main
 
 pool:
-  vmImage: 'ubuntu-22.04'  # Imagen más estable
+  vmImage: 'ubuntu-latest'  # usa el agente hospedado más reciente
 
 steps:
-  - task: Maven@4  # Usando la versión más nueva de la tarea Maven
+
+  # Verificar qué versión de Java hay por defecto (opcional, para diagnosticar)
+  - script: java -version
+    displayName: 'Versión de Java por defecto (diagnóstico)'
+
+  # Usar explícitamente Java 17 para evitar errores de incompatibilidad
+  - task: UseJavaVersion@1
+    inputs:
+      versionSpec: '17'
+      architecture: 'x64'
+    displayName: 'Usar Java 17'
+
+  # Compilar el proyecto y ejecutar pruebas unitarias
+  - task: Maven@4  # usamos la versión más nueva porque Maven@3 está obsoleto
     inputs:
       mavenPomFile: 'pom.xml'
+      goals: 'clean package'
+      javaHomeOption: 'Path'
       mavenOptions: '-Xmx3072m'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '17'
-      jdkArchitectureOption: 'x64'
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
-      goals: 'clean package'
-    displayName: 'Compilar y ejecutar tests con Maven'
+    displayName: 'Compilar y ejecutar pruebas con Maven'
 
-  # Ejecutar la aplicación (opcional, si tu JAR tiene un main)
-  - script: |
-      java -jar target/VitalApp-1.0-SNAPSHOT.jar
+  # Ejecutar la aplicación (si el .jar tiene un método main válido)
+  - script: java -jar target/VitalApp-1.0-SNAPSHOT.jar
     displayName: 'Ejecutar la aplicación'
 
-  # Publicar artefacto generado
+  # Publicar artefactos (JAR) generados
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: 'target'
