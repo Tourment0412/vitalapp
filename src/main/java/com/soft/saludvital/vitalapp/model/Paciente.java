@@ -88,22 +88,6 @@ public class Paciente {
                 "Diagnóstico: " + diagnostico + reset;
     }
 
-    /**
-     * Metodo que actualiza la informacion de un paciente
-     * @param paciente paciente que reemplazara al anterior
-     * @return true si se actualiza exitosamente el paciente, false en caso contrario
-     */
-    public boolean actualizarPaciente(Paciente paciente){
-        if(paciente!=null){
-            this.nombre = paciente.getNombre();
-            this.apellido = paciente.getApellido();
-            this.direccion = paciente.getDireccion();
-            this.telefono = paciente.getTelefono();
-            this.email = paciente.getEmail();
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Metodo que registra un nuevo paciente en la lista de pacientes si este no es nulo
@@ -122,13 +106,13 @@ public class Paciente {
     /**
      * Metodo que busca y obtiene un paciente con el ID proporcionado de la lista de pacientes.
      *
-     * @param id el identificador del paciente a buscar
+     * @param idPaciente el identificador del paciente a buscar
      * @return el objeto Paciente si se encuentra un paciente con el ID especificado,
      *         o null si no se encuentra ningún paciente con dicho ID
      */
-    public static Paciente obtenerPaciente(String id){
+    public static Paciente obtenerPaciente(String idPaciente){
         for(Paciente paciente:listaPacientes){
-            if(paciente.getId().equals(id)){
+            if(paciente.getId().equals(idPaciente)){
                 return paciente;
             }
         }
