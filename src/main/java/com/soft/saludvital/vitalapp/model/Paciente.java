@@ -180,6 +180,21 @@ public class Paciente {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Paciente{" +
+                "id=" + id +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", fechaNacimiento=" + fechaNacimiento +
+                ", genero='" + genero + '\'' +
+                ", direccion='" + direccion + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", email='" + email + '\'' +
+                // Evitar imprimir historial completo
+                ", historialMedico=" + (historialMedico != null ? "Historial con " + historialMedico.getListaCitas().size() + " registro(s)" : "null") +
+                '}';
+    }
 
 
 

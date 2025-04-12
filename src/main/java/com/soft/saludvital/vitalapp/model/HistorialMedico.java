@@ -2,7 +2,6 @@ package com.soft.saludvital.vitalapp.model;
 
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +24,17 @@ public class HistorialMedico {
 
     /**
      * Metodo que agrega una cita al historial del un paciente
+     *
      * @param cita cita nueva a agregar
+     * @return
      */
-    public void agregarRegistro(Cita cita) {
+    public boolean agregarRegistro(Cita cita) {
         if (listaCitas == null) {
             listaCitas = new ArrayList<>();
         }
         listaCitas.add(cita);
+
+        return true;
     }
 
     /**
@@ -86,5 +89,16 @@ public class HistorialMedico {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "HistorialMedico{" +
+                "id=" + id +
+                ", registros=" + listaCitas +
+                // No llamar a paciente.toString()
+                ", paciente=" + (paciente != null ? paciente.getNombre() + " " + paciente.getApellido() : "null") +
+                '}';
+    }
+
 
 }
