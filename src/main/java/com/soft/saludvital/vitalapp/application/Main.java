@@ -1,234 +1,129 @@
+
 package com.soft.saludvital.vitalapp.application;
 
 import com.soft.saludvital.vitalapp.model.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
 
 public class Main {
+    // Formateador para fechas y horas
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     public static void main(String[] args) {
-        Medico medico = quemarMedico();
-        Paciente paciente = quemarPaciente();
-        HistorialMedico historial = new HistorialMedico(paciente, null);
-        Scanner scanner = new Scanner(System.in);
+        imprimirEncabezado("SISTEMA DE GESTIÓN DE SALUD VITAL");
 
-        while (true) {
-            System.out.println("\n--- MENU PRINCIPAL ---");
-            System.out.println("1. Paciente");
-            System.out.println("2. Médico");
-            System.out.println("3. Salir");
-            System.out.print("Seleccione una opción: ");
-            int opcionPrincipal = scanner.nextInt();
-            scanner.nextLine();
+        // ==================== CREACIÓN DE PACIENTES ====================
+        imprimirTitulo("1. Registro de Pacientes");
 
-            switch (opcionPrincipal) {
-                case 1 -> menuPaciente(scanner, paciente, historial);
-                case 2 -> menuMedico(scanner, medico, paciente, historial);
-                case 3 -> {
-                    System.out.println("¡Gracias por usar SaludVital!");
-                    return;
-                }
-                default -> System.out.println("Opción inválida. Intente nuevamente.");
-            }
+        Paciente paciente1 = crearPaciente1();
+        Paciente paciente2 = crearPaciente2();
+
+        registrarPacientes(paciente1, paciente2);
+
+        // ==================== CREACIÓN DE MÉDICOS ====================
+        imprimirTitulo("2. Registro de Médicos");
+
+        Medico medico1 = crearMedico1();
+        Medico medico2 = crearMedico2();
+
+        // Podríamos tener un método para registrar médicos similar a pacientes
+        imprimirInformacionMedico(medico1);
+        imprimirInformacionMedico(medico2);
+
+        // ==================== GESTIÓN DE CITAS ====================
+        imprimirTitulo("3. Gestión de Citas");
+
+        Cita cita1 = crearCita1(paciente1, medico1);
+        Cita cita2 = crearCita2(paciente1, medico2);
+
+        // Agregar citas al historial
+        agregarCitasAHistorial(paciente1, cita1, cita2);
+
+        // ==================== MOSTRAR HISTORIAL INICIAL ====================
+        imprimirTitulo("4. Historial Médico Inicial");
+        mostrarHistorialPaciente(paciente1, "antes de finalización de citas");
+
+        // ==================== ACTUALIZACIÓN DE DIAGNÓSTICOS ====================
+        imprimirTitulo("5. Actualización de Diagnósticos");
+
+        actualizarDiagnosticos(cita1, cita2);
+        mostrarHistorialPaciente(paciente1, "después de finalización de citas");
+
+        // ==================== ENVÍO DE ALERTAS ====================
+        imprimirTitulo("6. Sistema de Alertas");
+
+        try {
+            enviarAlerta(paciente1);
+        } catch (Exception e) {
+            System.out.println("Error al enviar alerta: " + e.getMessage());
         }
+
+        // ==================== ACTUALIZACIÓN DE CITAS ====================
+        imprimirTitulo("7. Actualización de Información");
+
+        Cita citaActualizada = actualizarCita(paciente1, medico1);
+        mostrarResultadoOperacion("Actualización de cita",
+                paciente1.getHistorialMedico().actualizarRegistro(citaActualizada));
+
+        mostrarHistorialPaciente(paciente1, "después de actualización");
+
+        // ==================== ELIMINACIÓN DE REGISTROS ====================
+        imprimirTitulo("8. Eliminación de Registros");
+
+        mostrarResultadoOperacion("Eliminación de cita (ID: " + cita1.getId() + ")",
+                paciente1.getHistorialMedico().eliminarRegistro(cita1.getId()));
+
+        mostrarHistorialPaciente(paciente1, "después de eliminación de cita");
+
+        // Eliminar paciente
+        mostrarResultadoOperacion("Eliminación de paciente " + paciente2.getNombre() + " " + paciente2.getApellido(),
+                Paciente.eliminarPaciente(paciente2.getId()));
+
+        // ==================== RESUMEN FINAL ====================
+        imprimirTitulo("9. Resumen Final del Sistema");
+
+        System.out.println("Pacientes actualmente registrados en el sistema:");
+        mostrarListaPacientes();
+
+        imprimirPieDePagina("FIN DE LA DEMOSTRACIÓN");
     }
 
+    // ======== MÉTODOS DE CREACIÓN ========
 
-    private static void menuPaciente(Scanner scanner, Paciente pacienteActual, HistorialMedico historial) {
-        while (true) {
-            System.out.println("\n--- MENU PACIENTE ---");
-            System.out.println("1. Ver historial del paciente actual");
-            System.out.println("2. Listar registros");
-            System.out.println("3. Generar alerta");
-            System.out.println("4. Registrar nuevo paciente");
-            System.out.println("5. Listar todos los pacientes");
-            System.out.println("6. Buscar paciente por ID");
-            System.out.println("7. Actualizar paciente");
-            System.out.println("8. Eliminar paciente");
-            System.out.println("9. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (opcion) {
-                case 1 -> {
-                    List<Cita> historialCitas = pacienteActual.getHistorialMedico().obtenerHistorial();
-                    if (historialCitas != null) {
-                        historialCitas.forEach(System.out::println);
-                    } else {
-                        System.out.println("No hay historial disponible.");
-                    }
-                }
-                case 2 -> pacienteActual.getHistorialMedico().listarRegistros();
-                case 3 -> {
-                    String alerta = pacienteActual.generarAlerta();
-                    System.out.println(alerta);
-                    pacienteActual.enviarAlerta();
-                }
-                case 4 -> {
-                    Paciente nuevo = crearPacienteDesdeInput(scanner);
-                    if (Paciente.registrarPaciente(nuevo)) {
-                        System.out.println("✅ Paciente registrado exitosamente.");
-                    } else {
-                        System.out.println("❌ No se pudo registrar el paciente (puede que ya exista).");
-                    }
-                }
-                case 5 -> {
-                    List<Paciente> pacientes = Paciente.obtenerListaPacientes();
-                    if (pacientes.isEmpty()) {
-                        System.out.println("No hay pacientes registrados.");
-                    } else {
-                        pacientes.forEach(System.out::println);
-                    }
-                }
-                case 6 -> {
-                    System.out.print("Ingrese el ID del paciente: ");
-                    String id = scanner.nextLine();
-                    Paciente buscado = Paciente.obtenerPaciente(id);
-                    System.out.println(buscado != null ? buscado : "❌ Paciente no encontrado.");
-                }
-                case 7 -> {
-                    System.out.print("Ingrese el ID del paciente a actualizar: ");
-                    String id = scanner.nextLine();
-                    Paciente existente = Paciente.obtenerPaciente(id);
-                    if (existente != null) {
-                        Paciente actualizado = crearPacienteDesdeInput(scanner);
-                        actualizado.setId(id); // mantener el mismo ID
-                        if (Paciente.actualizarPaciente(id, actualizado)) {
-                            System.out.println("✅ Paciente actualizado correctamente.");
-                        } else {
-                            System.out.println("❌ Error al actualizar el paciente.");
-                        }
-                    } else {
-                        System.out.println("❌ Paciente no encontrado.");
-                    }
-                }
-                case 8 -> {
-                    System.out.print("Ingrese el ID del paciente a eliminar: ");
-                    String id = scanner.nextLine();
-                    boolean eliminado = Paciente.eliminarPaciente(id);
-                    System.out.println(eliminado ? "✅ Paciente eliminado." : "❌ Paciente no encontrado.");
-                }
-                case 9 -> {
-                    return;
-                }
-                default -> System.out.println("Opción inválida.");
-            }
-        }
-    }
-
-    private static Paciente crearPacienteDesdeInput(Scanner scanner) {
-        System.out.print("Nombre: ");
-        String nombre = scanner.nextLine();
-        System.out.print("Apellido: ");
-        String apellido = scanner.nextLine();
-        System.out.print("Fecha de nacimiento (YYYY-MM-DD): ");
-        LocalDate fechaNacimiento = LocalDate.parse(scanner.nextLine());
-        System.out.print("Género: ");
-        String genero = scanner.nextLine();
-        System.out.print("Dirección: ");
-        String direccion = scanner.nextLine();
-        System.out.print("Teléfono: ");
-        String telefono = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-
-        return Paciente.builder()
-                .nombre(nombre)
-                .apellido(apellido)
-                .fechaNacimiento(fechaNacimiento)
-                .genero(genero)
-                .direccion(direccion)
-                .telefono(telefono)
-                .email(email)
+    private static Paciente crearPaciente1() {
+        Paciente paciente = Paciente.builder()
+                .nombre("Juan")
+                .apellido("Pérez")
+                .fechaNacimiento(LocalDate.of(1990, 5, 12))
+                .genero("Masculino")
+                .direccion("Calle 123")
+                .telefono("3001234567")
+                .email("juanperez@gmail.com")
                 .build();
+
+        imprimirInformacionPaciente(paciente);
+        return paciente;
     }
 
+    private static Paciente crearPaciente2() {
+        Paciente paciente = Paciente.builder()
+                .nombre("María")
+                .apellido("Gómez")
+                .fechaNacimiento(LocalDate.of(1985, 9, 23))
+                .genero("Femenino")
+                .direccion("Carrera 45")
+                .telefono("3007654321")
+                .email("mariagomez@hotmail.com")
+                .build();
 
-    private static void menuMedico(Scanner scanner, Medico medico, Paciente paciente, HistorialMedico historial) {
-        while (true) {
-            System.out.println("\n--- MENU MEDICO ---");
-            System.out.println("1. Agendar cita");
-            System.out.println("2. Actualizar cita");
-            System.out.println("3. Eliminar cita");
-            System.out.println("4. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
-            int opcion = scanner.nextInt();
-            scanner.nextLine();
-
-            switch (opcion) {
-                case 1 -> {
-                    System.out.print("Descripción: ");
-                    String descripcion = scanner.nextLine();
-                    System.out.print("Estado: ");
-                    String estado = scanner.nextLine();
-                    System.out.print("Observaciones: ");
-                    String observaciones = scanner.nextLine();
-                    System.out.print("Año (YYYY): ");
-                    int anio = scanner.nextInt();
-                    System.out.print("Mes (1-12): ");
-                    int mes = scanner.nextInt();
-                    System.out.print("Día: ");
-                    int dia = scanner.nextInt();
-                    System.out.print("Hora (0-23): ");
-                    int hora = scanner.nextInt();
-                    System.out.print("Minuto: ");
-                    int minuto = scanner.nextInt();
-                    scanner.nextLine(); // Limpiar buffer
-
-                    LocalDateTime fechaHora = LocalDateTime.of(anio, mes, dia, hora, minuto);
-                    Cita cita = medico.agendarCita(fechaHora, paciente, descripcion, estado, observaciones);
-                    historial.agregarRegistro(cita);
-                    System.out.println("✅ Cita agendada exitosamente.");
-                }
-                case 2 -> {
-                    System.out.print("ID de la cita a actualizar: ");
-                    String id = scanner.nextLine();
-                    System.out.print("Nuevo diagnóstico: ");
-                    String diagnostico = scanner.nextLine();
-                    System.out.print("Nueva gravedad (Leve/Grave/Urgente): ");
-                    String gravedad = scanner.nextLine();
-
-                    Cita cita = buscarCita(historial, id);
-                    if (cita != null) {
-                        cita.definirDiagnostico(gravedad, diagnostico);
-                        boolean actualizado = historial.actualizarRegistro(cita);
-                        System.out.println(actualizado ? "✅ Cita actualizada." : "❌ No se pudo actualizar.");
-                    } else {
-                        System.out.println("❌ Cita no encontrada.");
-                    }
-                }
-                case 3 -> {
-                    System.out.print("ID de la cita a eliminar: ");
-                    String id = scanner.nextLine();
-                    boolean eliminada = historial.eliminarRegistro(id);
-                    System.out.println(eliminada ? "✅ Cita eliminada." : "❌ No se encontró la cita.");
-                }
-                case 4 -> {
-                    return;
-                }
-                default -> System.out.println("Opción inválida.");
-            }
-        }
+        imprimirInformacionPaciente(paciente);
+        return paciente;
     }
 
-    private static Cita buscarCita(HistorialMedico historial, String id) {
-        List<Cita> citas = historial.obtenerHistorial();
-        if (citas != null) {
-            for (Cita cita : citas) {
-                if (cita.getId().equals(id)) {
-                    return cita;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static Medico quemarMedico() {
+    private static Medico crearMedico1() {
         return Medico.builder()
                 .nombre("Juan Manuel")
                 .apellido("Isaza")
@@ -238,15 +133,187 @@ public class Main {
                 .build();
     }
 
-    public static Paciente quemarPaciente() {
-        return Paciente.builder()
-                .nombre("Carlos")
-                .apellido("Ramírez")
-                .fechaNacimiento(LocalDate.of(1980, 5, 20))
-                .genero("Masculino")
-                .direccion("Calle 123 #45-67, Bogotá")
-                .telefono("3104567890")
-                .email("carlos.ramirez@example.com")
+    private static Medico crearMedico2() {
+        return Medico.builder()
+                .nombre("Miguel")
+                .apellido("Mira")
+                .especialidad("General")
+                .telefono("3223553281")
+                .email("miguela.mira@gmail.com")
                 .build();
+    }
+
+    private static Cita crearCita1(Paciente paciente, Medico medico) {
+        Cita cita = Cita.builder()
+                .paciente(paciente)
+                .medico(medico)
+                .fechaHora(LocalDateTime.now().minusDays(10))
+                .motivo("Chequeo cardiológico de rutina")
+                .estado("leve")
+                .observaciones("Paciente con tensión alta")
+                .build();
+
+        System.out.println("✓ Cita creada: " + cita.getId() + " para " +
+                paciente.getNombre() + " con Dr. " + medico.getApellido() +
+                " - Motivo: " + cita.getMotivo());
+        return cita;
+    }
+
+    private static Cita crearCita2(Paciente paciente, Medico medico) {
+        Cita cita = Cita.builder()
+                .paciente(paciente)
+                .medico(medico)
+                .fechaHora(LocalDateTime.now().minusDays(2))
+                .motivo("Dolor abdominal fuerte")
+                .estado("grave")
+                .observaciones("Paciente tiene dolor abdominal fuerte")
+                .build();
+
+        System.out.println("✓ Cita creada: " + cita.getId() + " para " +
+                paciente.getNombre() + " con Dr. " + medico.getApellido() +
+                " - Motivo: " + cita.getMotivo());
+        return cita;
+    }
+
+    private static Cita actualizarCita(Paciente paciente, Medico medico) {
+        Cita cita = Cita.builder()
+                .paciente(paciente)
+                .medico(medico)
+                .fechaHora(LocalDateTime.now().minusDays(1))
+                .motivo("Dolor abdominal leve")
+                .estado("no grave")
+                .observaciones("Paciente tiene dolor abdominal medio")
+                .build();
+
+        System.out.println("✓ Cita actualizada para: " + paciente.getNombre() +
+                " con Dr. " + medico.getApellido() +
+                " - Nuevo estado: " + cita.getEstado());
+        return cita;
+    }
+
+    // ======== MÉTODOS DE OPERACIÓN ========
+
+    private static void registrarPacientes(Paciente... pacientes) {
+        System.out.println("\nRegistrando pacientes en el sistema...");
+        for (Paciente p : pacientes) {
+            boolean resultado = Paciente.registrarPaciente(p);
+            System.out.println("✓ Registro de " + p.getNombre() + " " + p.getApellido() +
+                    ": " + (resultado ? "EXITOSO" : "FALLIDO"));
+        }
+    }
+
+    private static void agregarCitasAHistorial(Paciente paciente, Cita... citas) {
+        System.out.println("\nAgregando citas al historial del paciente " +
+                paciente.getNombre() + " " + paciente.getApellido() + "...");
+
+        for (Cita cita : citas) {
+            boolean resultado = paciente.getHistorialMedico().agregarRegistro(cita);
+            System.out.println("✓ Cita " + cita.getId() + " agregada: " +
+                    (resultado ? "EXITOSO" : "FALLIDO"));
+        }
+    }
+
+    private static void actualizarDiagnosticos(Cita cita1, Cita cita2) {
+        System.out.println("Actualizando diagnósticos de las citas...");
+
+        cita1.definirDiagnostico("grave", "El paciente sufre problemas leves del corazón, " +
+                "es necesario agendar una cita pronto con especialista");
+        System.out.println("✓ Diagnóstico actualizado para cita " + cita1.getId() +
+                " - Estado: " + cita1.getEstado());
+
+        cita2.definirDiagnostico("urgente", "El paciente tiene dolor abdominal fuerte");
+        System.out.println("✓ Diagnóstico actualizado para cita " + cita2.getId() +
+                " - Estado: " + cita2.getEstado());
+    }
+
+    private static void enviarAlerta(Paciente paciente) {
+        System.out.println("Enviando alerta de salud para paciente " +
+                paciente.getNombre() + " " + paciente.getApellido() + "...");
+        paciente.enviarAlerta();
+        System.out.println("✓ Alerta enviada exitosamente");
+    }
+
+    // ======== MÉTODOS DE VISUALIZACIÓN ========
+
+    private static void imprimirInformacionPaciente(Paciente paciente) {
+        System.out.println("→ Paciente: " + paciente.getNombre() + " " + paciente.getApellido() +
+                " | Nacimiento: " + paciente.getFechaNacimiento().format(DATE_FORMATTER) +
+                " | Contacto: " + paciente.getTelefono());
+    }
+
+    private static void imprimirInformacionMedico(Medico medico) {
+        System.out.println("→ Dr. " + medico.getNombre() + " " + medico.getApellido() +
+                " | Especialidad: " + medico.getEspecialidad() +
+                " | Contacto: " + medico.getTelefono());
+    }
+
+    private static void mostrarHistorialPaciente(Paciente paciente, String contexto) {
+        System.out.println("\nHistorial médico de " + paciente.getNombre() + " " +
+                paciente.getApellido() + " (" + contexto + "):");
+
+        if (paciente.getHistorialMedico().getListaCitas().isEmpty()) {
+            System.out.println("   [El historial está vacío]");
+            return;
+        }
+
+        System.out.println("   ID Cita  |  Fecha        |  Médico          |  Estado   |  Motivo");
+        System.out.println("   ------------------------------------------------------------------");
+
+        paciente.getHistorialMedico().getListaCitas().forEach(registro -> {
+            if (registro instanceof Cita) {
+                Cita cita = (Cita) registro;
+                System.out.printf("   %-8s | %-12s | Dr. %-12s | %-8s | %s%n",
+                        cita.getId(),
+                        cita.getFechaHora().format(DATE_TIME_FORMATTER),
+                        cita.getMedico().getApellido(),
+                        cita.getEstado(),
+                        cita.getMotivo()
+                );
+            }
+        });
+    }
+
+    private static void mostrarListaPacientes() {
+        if (Paciente.obtenerListaPacientes().isEmpty()) {
+            System.out.println("   [No hay pacientes registrados]");
+            return;
+        }
+
+        System.out.println("   ID     |  Nombre Completo     |  Contacto");
+        System.out.println("   ------------------------------------------");
+
+        Paciente.obtenerListaPacientes().forEach(p ->
+                System.out.printf("   %-6s | %-20s | %s%n",
+                        p.getId(),
+                        p.getNombre() + " " + p.getApellido(),
+                        p.getTelefono()
+                )
+        );
+    }
+
+    private static void mostrarResultadoOperacion(String operacion, boolean resultado) {
+        String icono = resultado ? "✓" : "✗";
+        String estado = resultado ? "EXITOSO" : "FALLIDO";
+        System.out.println(icono + " " + operacion + ": " + estado);
+    }
+
+    // ======== MÉTODOS DE FORMATO ========
+
+    private static void imprimirEncabezado(String titulo) {
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println(" " + titulo);
+        System.out.println("=".repeat(80));
+    }
+
+    private static void imprimirTitulo(String titulo) {
+        System.out.println("\n" + "-".repeat(80));
+        System.out.println(" " + titulo);
+        System.out.println("-".repeat(80));
+    }
+
+    private static void imprimirPieDePagina(String mensaje) {
+        System.out.println("\n" + "=".repeat(80));
+        System.out.println(" " + mensaje);
+        System.out.println("=".repeat(80) + "\n");
     }
 }
