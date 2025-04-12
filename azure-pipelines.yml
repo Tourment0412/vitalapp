@@ -1,36 +1,31 @@
-# Maven
-# Build your Java project and run tests with Apache Maven.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/java
-
 trigger:
-- main
+  - main
 
 pool:
-  name: Default
+  vmImage: 'ubuntu-latest'  # Usa un agente hospedado por Microsoft
 
 steps:
-- script: |
-    echo "Compilando y ejecutando tests con Maven..."
-    mvn clean package
-  displayName: 'Build con Maven manual'
-  # Paso 2: Publicar resultados de pruebas JUnit
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/surefire-reports/TEST-*.xml'
-    testRunTitle: 'JUnit Test Results'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
-  displayName: 'Publicar resultados de pruebas JUnit'
-# Paso 2 Ejecutar la aplicación por consola (si ya tiene lógica ejecutable en el main)
-- script: |
-    java -jar target/VitalApp-1.0-SNAPSHOT.jar
-  displayName: 'Ejecutar la aplicación'
+  # Paso 1: Compilar y ejecutar tests con Maven
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      mavenOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '17'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'clean package'
+    displayName: 'Compilar y ejecutar tests con Maven'
 
-# Paso 3 Publicar artefactos (JAR) generados en Azure DevOps
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: 'target'
-    ArtifactName: 'vitalapp-artifact'
-  displayName: 'Publicar artefactos generados'
+  # Paso 2: Ejecutar la aplicación
+  - script: |
+      java -jar target/VitalApp-1.0-SNAPSHOT.jar
+    displayName: 'Ejecutar la aplicación'
+
+  # Paso 3: Publicar artefactos (JAR) generados
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: 'target'
+      ArtifactName: 'vitalapp-artifact'
+    displayName: 'Publicar artefactos generados'
