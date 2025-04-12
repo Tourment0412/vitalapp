@@ -2,11 +2,10 @@ trigger:
   - main
 
 pool:
-  vmImage: 'ubuntu-latest'  # Usa un agente hospedado por Microsoft
+  vmImage: 'ubuntu-22.04'  # Imagen más estable
 
 steps:
-  # Paso 1: Compilar y ejecutar tests con Maven
-  - task: Maven@3
+  - task: Maven@4  # Usando la versión más nueva de la tarea Maven
     inputs:
       mavenPomFile: 'pom.xml'
       mavenOptions: '-Xmx3072m'
@@ -18,12 +17,12 @@ steps:
       goals: 'clean package'
     displayName: 'Compilar y ejecutar tests con Maven'
 
-  # Paso 2: Ejecutar la aplicación
+  # Ejecutar la aplicación (opcional, si tu JAR tiene un main)
   - script: |
       java -jar target/VitalApp-1.0-SNAPSHOT.jar
     displayName: 'Ejecutar la aplicación'
 
-  # Paso 3: Publicar artefactos (JAR) generados
+  # Publicar artefacto generado
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: 'target'
