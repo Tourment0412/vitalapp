@@ -22,10 +22,22 @@ public class Main {
                 "Paciente indica fatiga al caminar"
         );
 
-        cita.definirDiagnostico("Grave", "El paciente sufre problemas severos del del corazon, es necesario agendar una cita urgente con especialista");
-
+        // Alerta LEVE
+        cita.definirDiagnostico("Leve", "El paciente presenta síntomas menores de resfriado común, se recomienda reposo y monitoreo.");
         String alerta = paciente.generarAlerta();
         paciente.enviarAlerta();
+        System.out.println("\n");
+        // Alerta GRAVE
+        cita.definirDiagnostico("Grave", "El paciente sufre problemas severos del corazón, es necesario agendar una cita urgente con especialista.");
+        String alerta2 = paciente.generarAlerta();
+        paciente.enviarAlerta();
+        System.out.println("\n");
+        // Alerta URGENTE
+        cita.definirDiagnostico("Urgente", "El paciente muestra signos de un posible infarto. Se requiere atención médica inmediata.");
+        String alerta3 = paciente.generarAlerta();
+        paciente.enviarAlerta();
+        System.out.println("\n");
+
 
     }
 

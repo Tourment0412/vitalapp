@@ -81,7 +81,7 @@ public class Paciente {
 
         String reset = "\u001B[0m";
 
-        return color + "⚠️ ALERTA DE SALUD ⚠️\n" +
+        return color + "\u26A0\uFE0F ALERTA DE SALUD \u26A0\uFE0F\n" +
                 "Gravedad: " + gravedad.toUpperCase() + "\n" +
                 "Diagnóstico: " + diagnostico + reset;
     }

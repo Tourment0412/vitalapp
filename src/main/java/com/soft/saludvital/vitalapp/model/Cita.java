@@ -33,6 +33,11 @@ public class Cita {
         this.observaciones = observaciones;
     }
 
+    /**
+     * Metodo para agregar un diagnostico una vez finalizada la cita medica
+     * @param gravedadDiagnostigo gravedad del diagnostico
+     * @param diagnostico explicacion del diagnostico
+     */
     public void definirDiagnostico (String gravedadDiagnostigo, String diagnostico){
         this.gravedadDiagnostigo = gravedadDiagnostigo;
         this.diagnostico = diagnostico;
