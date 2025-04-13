@@ -8,7 +8,6 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class HistorialMedico {
     @EqualsAndHashCode.Include
@@ -90,7 +89,7 @@ public class HistorialMedico {
         return false;
     }
 
-    @Override
+
     public String toString() {
         return "HistorialMedico{" +
                 "id=" + id +

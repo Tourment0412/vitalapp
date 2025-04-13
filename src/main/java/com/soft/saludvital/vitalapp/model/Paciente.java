@@ -10,7 +10,6 @@ import java.util.UUID;
 @Setter
 @Getter
 @NoArgsConstructor
-@ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Paciente {
     @EqualsAndHashCode.Include
@@ -164,7 +163,7 @@ public class Paciente {
         return false;
     }
 
-    @Override
+
     public String toString() {
         return "Paciente{" +
                 "id=" + id +
