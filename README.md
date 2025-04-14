@@ -28,6 +28,7 @@ vitalapp/
 │                           ├── model/
 │                           │   ├── Paciente.java
 │                           │   └── HistorialMedico.java
+|                           |   └── (demás clases de apoyo al modelo)
 │                           └── ... (otros paquetes y clases)
 ├── azure-pipelines.yml
 ├── pom.xml
