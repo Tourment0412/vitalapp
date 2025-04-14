@@ -58,4 +58,21 @@ public class Medico {
 
         return cita;
     }
+
+    /**
+     * Actualiza los datos del medico
+     * @param nombre Nuevo nombre del medico
+     * @param apellido Nuevo apellido del medico
+     * @param especialidad Nueva especialidad del medico
+     * @param telefono Nuevo telefono del medico
+     * @param email Nuevo email del medico
+     */
+    public void actualizarMedico(String nombre,String apellido,String especialidad,String telefono,String email) {
+        setNombre(nombre);
+        setApellido(apellido);
+        setEspecialidad(especialidad);
+        setTelefono(telefono);
+        setEmail(email);
+    }
+
 }
