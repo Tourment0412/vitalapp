@@ -32,3 +32,29 @@ vitalapp/
 ├── azure-pipelines.yml
 ├── pom.xml
 └── README.md
+```
+## 🧰 Tecnologías Utilizadas
+
+1. **Clonar el repositorio:**
+
+   ```bash
+   git clone https://github.com/Tourment0412/vitalapp.git
+   cd vitalapp
+    ```
+## ⚙️ Integración Continua
+
+Se ha configurado una **pipeline en Azure DevOps** mediante el archivo `azure-pipelines.yml`. Esta pipeline realiza automáticamente las siguientes tareas en cada push a la rama `main`:
+
+- ✅ **Compilación del proyecto**
+- 🧪 **Ejecución de pruebas unitarias**
+- 📦 **Publicación de artefactos generados**
+
+Esto permite asegurar la calidad del código y la entrega continua de versiones funcionales del proyecto.
+
+---
+
+## 📝 Notas Adicionales
+
+- 💡 **Lombok**: Asegúrate de tener configurado correctamente **Lombok** en tu entorno de desarrollo (por ejemplo, en IntelliJ o Eclipse) para evitar errores de compilación relacionados con getters, setters u otros métodos generados automáticamente.
+
+- ☕ **Java 17**: El proyecto está configurado para usar **Java 17**. Verifica que esta versión esté instalada en tu máquina para poder compilar y ejecutar correctamente la aplicación.
