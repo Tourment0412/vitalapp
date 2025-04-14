@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DemoTest {
 
@@ -324,8 +325,45 @@ public class DemoTest {
         assertFalse(paciente.getHistorialMedico().obtenerHistorial().isEmpty());
     }
 
+    /**
+     * Metodo que prueba laactrualizacion de los datos del medico
+     */
+    @Test
+    void actualizarMedicoTest() {
+        Medico medico = quemarMedico();
+        medico.actualizarMedico("Jose","Gomez","Pediatra","3458652376","josegom@gmail.com");
+        assertAll("Verificar datos actualizados",
+                () -> assertEquals("Jose",medico.getNombre()),
+                () -> assertEquals("Gomez",medico.getApellido()),
+                () -> assertEquals("Pediatra",medico.getEspecialidad()),
+                () -> assertEquals("3458652376",medico.getTelefono()),
+                () -> assertEquals("josegom@gmail.com",medico.getEmail())
+        );
+    }
 
+    /**
+     * Verifica la reprogramamción de una cita
+     */
+    @Test
+    void reprogramarCitaTest() {
+        Medico medico = quemarMedico();
+        Paciente paciente = quemarPaciente();
+        Cita cita=quemarCita(medico,paciente);
+        LocalDateTime fechaHora = LocalDateTime.now();
+        cita.reprogramarCita(fechaHora);
+        assertEquals(fechaHora,cita.getFechaHora());
+    }
 
-
+    /**
+     * Verifica la cancelacion de la cita
+     */
+    @Test
+    void cancelarCitaTest() {
+        Medico medico = quemarMedico();
+        Paciente paciente = quemarPaciente();
+        Cita cita=quemarCita(medico,paciente);
+        cita.cancelarCita();
+        assertEquals("Cancelada",cita.getEstado());
+    }
 
 }

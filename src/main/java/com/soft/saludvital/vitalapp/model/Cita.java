@@ -43,4 +43,19 @@ public class Cita {
         this.diagnostico = diagnostico;
     }
 
+    /**
+     * Cambia la fecha y hora de la cita
+     * @param nuevaFechaHora Nueva fecha y hora de la cita reprogramada
+     */
+    public void reprogramarCita(LocalDateTime nuevaFechaHora) {
+        setFechaHora(nuevaFechaHora);
+    }
+
+    /**
+     * Cancela la cita
+     */
+    public void cancelarCita() {
+        setEstado("Cancelada");
+    }
+
 }
