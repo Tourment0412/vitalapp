@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+/**
+ * Clase cita
+ */
 public class Cita {
     @EqualsAndHashCode.Include
     private String id;
