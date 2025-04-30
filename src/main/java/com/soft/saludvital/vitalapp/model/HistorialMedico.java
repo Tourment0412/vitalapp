@@ -9,6 +9,9 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
+/**
+ * Clase historial medico
+ */
 public class HistorialMedico {
     @EqualsAndHashCode.Include
     private String id;
